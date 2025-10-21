@@ -77,3 +77,16 @@ export function showLoadMoreButton() {
 export function hideLoadMoreButton() {
   loadMoreButton.style.display = 'none';
 }
+
+export function scroll(pxY) {
+  window.scrollBy({
+    top: pxY,
+    left: 0,
+    behavior: 'smooth',
+  });
+}
+
+export function getHeightImageCard(elem) {
+  const rect = elem[0].getBoundingClientRect();
+  return (rect.height + 24) * 2;
+}

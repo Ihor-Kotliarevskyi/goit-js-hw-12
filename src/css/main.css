@@ -62,7 +62,7 @@ button:hover {
 
 .load-more-button {
   width: 125px;
-  margin: 0 auto 24px auto;
+  margin: 64px auto 64px auto;
 }
 
 .gallery {
@@ -75,6 +75,7 @@ button:hover {
 }
 
 .gallery-item {
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 0;
