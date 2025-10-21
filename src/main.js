@@ -38,6 +38,7 @@ function submitSearch(event) {
     getImagesByQuery(searchText, pageCounter)
       .then(data => {
         if (!data.hits.length) {
+          hideLoadMoreButton();
           showInfo(
             'Sorry, there are no images matching your search query. Please try again!'
           );
