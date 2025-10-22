@@ -25,7 +25,7 @@ loadMoreButton.addEventListener('click', loadMore);
 let pageCounter = 1;
 let searchText = '';
 
-function submitSearch(event) {
+async function submitSearch(event) {
   event.preventDefault();
   pageCounter = 1;
   searchText = event.target.elements['search-text'].value.trim();
@@ -35,59 +35,54 @@ function submitSearch(event) {
   } else {
     showLoader();
     clearGallery(gallery);
-    getImagesByQuery(searchText, pageCounter)
-      .then(data => {
-        if (!data.hits.length) {
-          hideLoadMoreButton();
-          showInfo(
-            'Sorry, there are no images matching your search query. Please try again!'
-          );
-        } else {
-          clearGallery(gallery);
-          createGallery(data.hits, gallery);
-          showLoadMoreButton();
-          pageCounter++;
-          if (data.totalHits / PER_PAGE <= pageCounter) {
-            hideLoadMoreButton();
-            showInfo(
-              "We're sorry, but you've reached the end of search results."
-            );
-          }
-        }
-      })
-      .catch(error => {
-        showError(error);
-      })
-      .finally(() => {
-        searchInput.reset();
-        hideLoader();
-      });
-  }
-}
-
-function loadMore(event) {
-  event.preventDefault();
-  showLoader();
-  getImagesByQuery(searchText, pageCounter)
-    .then(data => {
-      if (data.totalHits / PER_PAGE <= pageCounter) {
-        createGallery(data.hits, gallery);
+    try {
+      const data = await getImagesByQuery(searchText, pageCounter);
+      if (!data.hits.length) {
         hideLoadMoreButton();
-        scroll(getHeightImageCard(gallery.children));
-        showInfo("We're sorry, but you've reached the end of search results.");
+        showInfo(
+          'Sorry, there are no images matching your search query. Please try again!'
+        );
       } else {
         createGallery(data.hits, gallery);
         showLoadMoreButton();
-        scroll(getHeightImageCard(gallery.children));
         pageCounter++;
+        if (data.totalHits / PER_PAGE <= pageCounter) {
+          hideLoadMoreButton();
+          showInfo(
+            "We're sorry, but you've reached the end of search results."
+          );
+        }
       }
-    })
-    .catch(error => {
+    } catch (error) {
       showError(error);
-    })
-    .finally(() => {
+    } finally {
+      searchInput.reset();
       hideLoader();
-    });
+    }
+  }
+}
+
+async function loadMore(event) {
+  event.preventDefault();
+  showLoader();
+  try {
+    const data = await getImagesByQuery(searchText, pageCounter);
+    if (data.totalHits / PER_PAGE <= pageCounter) {
+      createGallery(data.hits, gallery);
+      hideLoadMoreButton();
+      scroll(getHeightImageCard(gallery.children));
+      showInfo("We're sorry, but you've reached the end of search results.");
+    } else {
+      createGallery(data.hits, gallery);
+      showLoadMoreButton();
+      scroll(getHeightImageCard(gallery.children));
+      pageCounter++;
+    }
+  } catch (error) {
+    showError(error);
+  } finally {
+    hideLoader();
+  }
 }
 
 iziToast.settings({

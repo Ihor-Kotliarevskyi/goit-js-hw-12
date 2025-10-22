@@ -61,6 +61,7 @@ button:hover {
 }
 
 .load-more-button {
+  display: none;
   width: 125px;
   margin: 64px auto 64px auto;
 }
